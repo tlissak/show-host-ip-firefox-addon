@@ -1,48 +1,59 @@
 window.addEventListener("load", function load(event){
     window.removeEventListener("load", load, false);
-    myExtension.init(); 
+    if(!gBrowser) return ;
+	
+	gBrowser.addEventListener("DOMContentLoaded", function(aEvent) {
+		var doc = aEvent.originalTarget; 
+		var win = doc.defaultView; 
+		if (doc.nodeName != "#document") return; // only documents
+		if (win != win.top) return; //only top window.
+		if (win.frameElement) return; // skip iframes/frames
+		DnsCache.get(doc.location.hostname);		
+	}, false);
+	
+	gBrowser.tabContainer.addEventListener("TabSelect", function(event){
+		DnsCache.get(gBrowser.selectedBrowser.contentWindow.location.hostname) ;
+	}, false);
+	
 },false);
 
-var myExtension = {
-    init: function() {
-        if(gBrowser)
-			gBrowser.addEventListener("DOMContentLoaded", this.onPageLoad, false);
-    },
-    onPageLoad: function(aEvent) {
-        var doc = aEvent.originalTarget; 
-        var win = doc.defaultView; 
-
-         if (doc.nodeName != "#document") return; // only documents
-         if (win != win.top) return; //only top window.
-         if (win.frameElement) return; // skip iframes/frames
-        
-		initIP(doc.location.hostname);		
-    }
-}
-
-function initIP(host){	
-	var address= 'http://p.lissak.fr/getip.php?host=' + host ; 
-	try	{
-		xmlhttp = new XMLHttpRequest();
-	}catch (e){
-		xmlhttp=false;
+var DnsCache = {
+  pairs : {}
+	,get:function(_host){
+		if (!_host){
+			$('gethostip-panel').label = "0.0.0.0"  ;
+			$('gethostip-panel-status').label = "E"
+			return 0 ;
+		}
+		if (_host in this.pairs){			
+			$('gethostip-panel').label = this.pairs[_host] ;
+			$('gethostip-panel-status').label = "C"
+			return 2 ;			
+		}
+		this.getIp(_host);
+		return 1 ;
 	}
-	xmlhttp.overrideMimeType("text/xml");
-	xmlhttp.open("GET", address, true);
-	xmlhttp.onreadystatechange=function()	{
-		if(xmlhttp.status!="200"){
-			return;
+	,provider:'http://p.lissak.fr/getip.php?host=' 
+	,getIp:function(host){	
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.overrideMimeType("text/xml");
+		xmlhttp.open("GET", this.provider + host, true);
+		xmlhttp.send(null);
+		that = this ;
+		xmlhttp.onload = function(){
+			$('gethostip-panel').label = xmlhttp.responseText ;
+			$('gethostip-panel-status').label = "I"
+			that.pairs[host] = xmlhttp.responseText ;
 		}
 	}
-	xmlhttp.send(null);
-	xmlhttp.onload = function(){
-		var gethostip=xmlhttp.responseText;
-		//gethostip = ipFromString(gethostip);
-		//if(validateIP(gethostip)){
-			document.getElementById('gethostip-panel').label = gethostip;
-		//}else{		
-		//}
-	}
+} ;
+function $(_id){ return document.getElementById(_id) ; }
+
+function whoislookup(){
+	var myUrl = 'http://who.is/whois-ip/ip-address/'+ $('gethostip-panel').label  ;
+	var tBrowser = top.document.getElementById("content");	
+	var tab = tBrowser.addTab(myUrl);
+	tBrowser.selectedTab = tab;
 }
 
 function update(){
@@ -53,26 +64,11 @@ function update(){
                    .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
                    .getInterface(Components.interfaces.nsIDOMWindow);
 	var host = mainWindow.getBrowser().selectedBrowser.contentWindow.location.hostname;
-
-	document.getElementById('gethostip-panel').label = 'Reload : ' +host;
-	initIP(host);
+	DnsCache.getIp(host); //escape cache 
 }
-
 
 function ip2clipboard(){
 	var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"];
 	clipboardHelper = clipboardHelper.getService(Components.interfaces.nsIClipboardHelper);
-     clipboardHelper.copyString(document.getElementById('gethostip-panel').label);
-}
-
-
-function validateIP(IP){
-	var validIpAddress = /^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/;
-	return validIpAddress.exec(IP);
-}
-
-function ipFromString(ipWithin){
-	var match = (new RegExp(/\d\d?\d?\.\d\d?\d?\.\d\d?\d?\.\d\d?\d?/)).exec(ipWithin) ;
-	if(match==null) return 'error';
-	else return match[0];
+    clipboardHelper.copyString($('gethostip-panel').label);
 }
