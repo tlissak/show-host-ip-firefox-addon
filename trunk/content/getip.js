@@ -2,6 +2,15 @@ window.addEventListener("load", function load(event){
     window.removeEventListener("load", load, false);
     if(!gBrowser) return ;
 	
+	gBrowser.addProgressListener({
+	  onLocationChange: function(aProgress, aRequest, aURI){
+		DnsCache.get(gBrowser.selectedBrowser.contentWindow.location.hostname);		
+		
+	  }},
+	Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
+  
+	/*
+	return ;	
 	gBrowser.addEventListener("DOMContentLoaded", function(aEvent) {
 		var doc = aEvent.originalTarget; 
 		var win = doc.defaultView; 
@@ -14,8 +23,12 @@ window.addEventListener("load", function load(event){
 	gBrowser.tabContainer.addEventListener("TabSelect", function(event){
 		DnsCache.get(gBrowser.selectedBrowser.contentWindow.location.hostname) ;
 	}, false);
-	
+	*/
 },false);
+
+
+
+
 
 var DnsCache = {
   pairs : {}
@@ -32,9 +45,29 @@ var DnsCache = {
 		}
 		this.getIp(_host);
 		return 1 ;
+	}	
+	,getIp:function(host){
+		var cls = Cc['@mozilla.org/network/dns-service;1'];
+		var iface = Ci.nsIDNSService;
+		var dns = cls.getService(iface); //dns object
+		//https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIDNSService#Resolve_flag_constants
+		var nsrecord = dns.resolve( host , 5 ); //resolve hostname 5 is not ipv6
+		
+		if (nsrecord){
+			var record_1 = nsrecord.getNextAddrAsString() ;
+			$('gethostip-panel').label = record_1 ;
+			$('gethostip-panel-status').label = "G"
+			this.pairs[host] = record_1 ;				
+			//while (nsrecord && nsrecord.hasMore()){
+				//var record_1 = nsrecord.getNextAddrAsString() ;
+				//$('gethostip-panel-status').label += "+";
+			//};
+		}
+		
+		
 	}
 	,provider:'http://p.lissak.fr/getip.php?host=' 
-	,getIp:function(host){	
+	,getProviderIp:function(host){	
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.overrideMimeType("text/xml");
 		xmlhttp.open("GET", this.provider + host, true);
