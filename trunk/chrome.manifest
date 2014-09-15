@@ -1,3 +1,2 @@
 content	gethostip	content/
-locale	gethostip	en-US	locale/en-US/
 overlay	chrome://browser/content/browser.xul	chrome://gethostip/content/firefoxOverlay.xul
