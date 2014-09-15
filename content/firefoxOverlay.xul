@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE overlay SYSTEM "chrome://gethostip/locale/gethostip.dtd">
-<overlay id="gethostip-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script src="overlay.js"/>
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="gethostip-strings" src="chrome://gethostip/locale/gethostip.properties"/>
-  </stringbundleset>
-<script type="application/x-javascript" src="chrome://gethostip/content/getip.js" />
 
- <statusbar id="status-bar">	
-  	<statusbarpanel id="gethostip-panel" label="Loading ..." tooltiptext="Your current external IP address" context="ipMenu" />
-	<statusbarpanel id="gethostip-panel-status" label="" />
- </statusbar>   
+<overlay id="gethostip-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<script type="application/x-javascript" src="firefoxOverlay.js" />
+
+	 <statusbar id="status-bar">	
+		<statusbarpanel id="gethostip-panel" label="Loading ..." tooltiptext="Your current external IP address" context="ipMenu" />
+		<statusbarpanel id="gethostip-panel-status" label="" />
+	 </statusbar>   
  
- <popupset id="mainPopupSet">
-    <menupopup id="ipMenu">
-		<menuitem label="Who.is lookup" oncommand="whoislookup()"/>
-		<menuitem label="Refresh IP Address" oncommand="update()"/>
-		<menuitem label="Copy to Clipboard" oncommand="ip2clipboard()"/>	 
-    </menupopup>
- </popupset>
+	 <popupset id="mainPopupSet">
+		<menupopup id="ipMenu">
+			<menuitem label="Who.is lookup" oncommand="whoislookup()"/>
+			<menuitem label="Refresh IP Address" oncommand="update()"/>
+			<menuitem label="Copy to Clipboard" oncommand="ip2clipboard()"/>	 
+		</menupopup>
+	 </popupset>
 </overlay>
 
 
