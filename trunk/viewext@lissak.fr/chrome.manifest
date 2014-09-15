@@ -1,0 +1,3 @@
+content	viewext	content/
+locale	viewext	en-US	locale/en-US/
+overlay	chrome://browser/content/browser.xul	chrome://viewext/content/firefoxOverlay.xul

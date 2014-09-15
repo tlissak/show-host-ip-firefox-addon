@@ -1,0 +1,50 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+.jsview-hMIListbox {   width:250px;}
+.jsview-bgroundWhite {  background:white;}
+.jsview-boldLarge {  font-weight:700;  font-size:x-large;}
+.jsview-boldNormal {  font-weight:700;}
+.jsview-smallSep {  height:10px;}
+.jsview-alertMsg {  font-family:verdana;  font-size:8pt;  text-align:justify;}
+.jsview-textEditor {  height:250px;  border:none;  background:white;}
+.jsview-guiTree {  height:150px;}
+.jsview-menuBox {  height:150px;}
+.jsview-boxWidth {  width:170px;}
+.jsview-viewTree {  height:250px;}
+.jsview-blueBold {  color:blue;  font-weight:700;}
+.jsview-miniSep {  height:5px;}
+.jsview-borderBlack {  border:1pt solid black;}
+.jsview-tooltipWidth {  width:80px;}
+.jsview-italic {  font-style:italic;}
+
+
+#viewext-panel{
+	background:#DDD;
+	border:1px solid #000;
+	border-radius:3px;
+}
+
+/* LI ITEM : */
+
+
+#jsview-status[jsview="css"],
+#jsview-button[jsview="css"],
+#jsview-context[jsview="css"],
+#jsview-view[jsview="css"],
+.jsview-css {
+  list-style-image: url("css.gif");
+  list-style-position: inside;
+  -moz-image-region: rect(0px, 16px, 16px, 0px);  
+  -moz-box-orient: horizontal;
+}
+
+#jsview-status[jsview="js"],
+#jsview-button[jsview="js"],
+#jsview-context[jsview="js"],
+#jsview-view[jsview="js"],
+.jsview-js {
+  list-style-image: url("js.gif");
+  list-style-position: inside;
+  -moz-image-region: rect(0px, 16px, 16px, 0px);  
+  -moz-box-orient: horizontal;
+}
