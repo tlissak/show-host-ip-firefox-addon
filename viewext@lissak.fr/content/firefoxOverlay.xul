@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="firefoxOverlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://viewext/locale/viewext.dtd">
+<overlay id="viewext-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<!-- chrome://viewext/content/firefoxOverlay.js -->
+	<script type="application/x-javascript" src="firefoxOverlay.js" />
+	<statusbar id="status-bar">	
+		<statusbarpanel id="viewext-panel" label="CSS | JS"  onclick="process()"  tooltiptext="" context="viewextMenu" />
+	</statusbar>   
+	<popupset id="mainPopupSet">
+		<menupopup id="viewextMenu">
+		</menupopup>
+	</popupset>
+</overlay>
+
+
+
