@@ -4,7 +4,8 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>viewext@lissak.fr</em:id>
     <em:name>Show external css/js files</em:name>
-    <em:version>0.1</em:version>
+    <em:version>0.1.1</em:version>
+	<em:type>2</em:type>
     <em:creator>tlissak</em:creator>
     <em:description>Show external css/js files</em:description>
     <em:homepageURL>http://p.lissak.fr</em:homepageURL>
