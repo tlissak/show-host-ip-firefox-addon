@@ -29,7 +29,7 @@ var nsUtil = {
 	,nsResolve:function(host){
 		var cls = Cc['@mozilla.org/network/dns-service;1'];
 		var dns = cls.getService(Ci.nsIDNSService ); // ( iface ) 
-		var nsrecord = dns.resolve( host , 5 ); //resolve hostname 5 is not ipv6 //https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIDNSService#Resolve_flag_constants
+		var nsrecord = dns.asyncResolve( host , 5 ); //resolve hostname 5 is not ipv6 //https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIDNSService#Resolve_flag_constants
 		if (nsrecord){ return nsrecord.getNextAddrAsString() ; }
 		return "-" ;
 	}

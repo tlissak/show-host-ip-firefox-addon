@@ -49,11 +49,6 @@ var veUtil = {
 		}
 		return urls;
 	}
-	,getCacheService: function() {
-		return Components.classes["@mozilla.org/network/cache-service;1"].
-		getService(Components.interfaces.nsICacheService).
-		createSession("HTTP", 0, true);
-	}
 	,getStr:function(s){return s ;}
 	
 	,populateMenu: function(menu) {
@@ -100,7 +95,7 @@ var veUtil = {
 			
 			size = this.getCacheSize(js[i].spec)
 			
-			attrs = this.buildMenuAttrArray(fname , size ,css[i].spec , cname ) ;
+			attrs = this.buildMenuAttrArray(fname , size ,js[i].spec , cname ) ;
 			
 			menu.appendChild(this.makeElement(attrs));
 		}
@@ -153,8 +148,6 @@ var veUtil = {
 				  ['statustext',spec],
 				  ['tooltiptext',spec],
 				  ['oncommand','veUtil.viewSource(this.value,4);'],
-				 // ['onmouseover','window.content.status = this.value;'],
-				//  ['onmouseout',"window.content.status = 'Done';"],
 				  ['class','menuitem-iconic ' + cname]];
 	}
 	
@@ -162,14 +155,6 @@ var veUtil = {
 	// get cache service failed !
 	,getCacheSize:function(spec){
 		return "";
-		var cache = this.getCacheService();
-		cacheKey = spec.replace(/#.*$/,'');
-			try {
-				entry = cache.openCacheEntry(cacheKey, Components.interfaces.nsICache.ACCESS_READ, false);				
-				return ' (' + (entry.dataSize / 1024).toFixed(2) + ' ' + kb + ')';				
-			} catch(e) {
-				return '';
-			}
 	}
 	
 	,viewAll: function(type,win) {
