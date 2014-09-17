@@ -1,54 +1,66 @@
-window.addEventListener("load", function load(event){
-    window.removeEventListener("load", load, false);
-    if(!gBrowser) return ;	
-	gBrowser.addProgressListener({
-	  onLocationChange: function(aProgress, aRequest, aURI){  nsUtil.Process(nsUtil.GetCurrentHost(), true );  }},
-	Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
-},false);
-
-var nsUtil = {	
-	Cache : {}
+var nsGhipUtil = {		
+	c:function(s){
+		gBrowser.selectedBrowser.contentWindow.console.log(s) ;
+	}
+	,_cache : {}
 	, $ : function(_id){ return document.getElementById(_id) ; }
-	, LabelState : function(key ) {  this.$('gethostip-panel-status').label = key[0] ; }
+	, LabelState : function(key ) { 
+		this.$('gethostip-panel').setAttribute('class', 'ghip-' + key );
+	}
 	, GetCurrentHost : function(){  return gBrowser.selectedBrowser.contentWindow.location.hostname  ;	}
 	, Process: function(_host,useCache){
 		if (!_host){
-			this.LabelState( "Empty" ) ;
-			this.$('gethostip-panel').label =  "0.0.0.0"  ; return ;
+			this.LabelState( "empty" ) ;
+			this.$('gethostip-panel').label =  "-"  ; 
+			return ;
 		}
-		if (useCache && (_host in this.Cache)){
-			this.LabelState( "Cache" ) ;
-			this.$('gethostip-panel').label =  this.Cache[_host] ; return ;
-			//if (host in nsUtil.Cache) delete nsUtil.Cache[host] //cleanup cache 
-		}		
-		var record = this.nsResolve(_host); 
-		this.LabelState( "Resolved" ) ; 
-		this.Cache[_host] = record ;
-		this.$('gethostip-panel').label = record ;		
-	}
-	,nsResolve:function(host){
+		if (useCache && (_host in this._cache)){
+			this.LabelState( "cache" ) ;
+			this.$('gethostip-panel').label =  this._cache[_host] ; 
+			return ;
+		}
 		var cls = Cc['@mozilla.org/network/dns-service;1'];
 		var dns = cls.getService(Ci.nsIDNSService ); // ( iface ) 
-		var nsrecord = dns.asyncResolve( host , 5 ); //resolve hostname 5 is not ipv6 //https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIDNSService#Resolve_flag_constants
-		if (nsrecord){ return nsrecord.getNextAddrAsString() ; }
-		return "-" ;
+
+		dns.asyncResolve( _host , 5 , new nsGhipUtil.nsResolveListner(_host) ,null ); //resolve hostname : 5 is not ipv6 		
 	}
+	,nsResolveListner : function(_host){
+		this.host = _host; //host context
+		this.onLookupComplete = function( aRequest, aRecord, aStatus ){
+			if (aRecord){ 
+				record = aRecord.getNextAddrAsString() ; 				
+				nsGhipUtil.LabelState( "resolved" ) ; 				
+				nsGhipUtil._cache[this.host] = record ;				
+				nsGhipUtil.$('gethostip-panel').label = record ;				
+			}else{
+				nsGhipUtil.$('gethostip-panel').label = "0.0.0.0" ;
+			}
+		}
+	}
+	,load:function(event){
+		window.removeEventListener("load", nsGhipUtil.load, false); 
+		if(!gBrowser) return ;	//firefox only
+		gBrowser.addProgressListener({
+		  onLocationChange: function(aProgress, aRequest, aURI){  
+			nsGhipUtil.Process(nsGhipUtil.GetCurrentHost(), true );  
+		}});
+	}
+	,whoislookup: function(){	
+		var tBrowser = top.document.getElementById("content");	
+		var tab = tBrowser.addTab('http://who.is/whois-ip/ip-address/'+ nsGhipUtil.$('gethostip-panel').label );
+		tBrowser.selectedTab = tab;
+	}
+	,update:function (){
+		var mainWindow = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).getInterface(Components.interfaces.nsIWebNavigation).QueryInterface(Components.interfaces.nsIDocShellTreeItem).rootTreeItem.QueryInterface(Components.interfaces.nsIInterfaceRequestor).getInterface(Components.interfaces.nsIDOMWindow);
+		var host = mainWindow.getBrowser().selectedBrowser.contentWindow.location.hostname;	
+		nsGhipUtil.Process(host,false ); // no cache
+	}
+	,ip2clipboard:function(){
+		var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"];
+		var clipboardHelperService = clipboardHelper.getService(Components.interfaces.nsIClipboardHelper);
+		clipboardHelperService.copyString(nsGhipUtil.$('gethostip-panel').label);
+	}
+	
 } ;
 
-function whoislookup(){	
-	var tBrowser = top.document.getElementById("content");	
-	var tab = tBrowser.addTab('http://who.is/whois-ip/ip-address/'+ nsUtil.$('gethostip-panel').label );
-	tBrowser.selectedTab = tab;
-}
-
-function update(){
-	var mainWindow = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).getInterface(Components.interfaces.nsIWebNavigation).QueryInterface(Components.interfaces.nsIDocShellTreeItem).rootTreeItem.QueryInterface(Components.interfaces.nsIInterfaceRequestor).getInterface(Components.interfaces.nsIDOMWindow);
-	var host = mainWindow.getBrowser().selectedBrowser.contentWindow.location.hostname;	
-	nsUtil.Process(host,false ); // no cache
-}
-
-function ip2clipboard(){
-	var clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"];
-	var clipboardHelperService = clipboardHelper.getService(Components.interfaces.nsIClipboardHelper);
-    clipboardHelperService.copyString(nsUtil.$('gethostip-panel').label);
-}
+window.addEventListener("load", nsGhipUtil.load ,false);

@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="firefoxOverlay.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://gethostip/locale/gethostip.dtd">
+
 <overlay id="gethostip-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 <script type="application/x-javascript" src="chrome://gethostip/content/firefoxOverlay.js" />
 
  <statusbar id="status-bar">	
   	<statusbarpanel id="gethostip-panel" label="Loading ..." tooltiptext="Your current external IP address" context="ipMenu" />
-	<statusbarpanel id="gethostip-panel-status" label="" />
+	<!-- <statusbarpanel id="gethostip-panel-status" label="" /> -->
  </statusbar>   
  
  <popupset id="mainPopupSet">
     <menupopup id="ipMenu">
-		<menuitem label="Who.is lookup" oncommand="whoislookup()"/>
-		<menuitem label="Refresh IP Address" oncommand="update()"/>
-		<menuitem label="Copy to Clipboard" oncommand="ip2clipboard()"/>	 
+		<menuitem label="Who.is lookup" oncommand="nsGhipUtil.whoislookup()"/>
+		<menuitem label="Refresh IP Address" oncommand="nsGhipUtil.update()"/>
+		<menuitem label="Copy to Clipboard" oncommand="nsGhipUtil.ip2clipboard()"/>	 
     </menupopup>
  </popupset>
 </overlay>
