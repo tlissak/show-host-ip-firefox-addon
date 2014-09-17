@@ -3,7 +3,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>gethostip@lissak.fr</em:id>
     <em:name>Show Host IP</em:name>
-    <em:version>0.1.1</em:version>
+    <em:version>0.1.3</em:version>
 	<em:type>2</em:type>
     <em:creator>tlissak</em:creator>
     <em:description>Shows Host IP address</em:description>
